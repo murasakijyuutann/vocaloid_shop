@@ -15,7 +15,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create  # change to 'update' after first run
+      ddl-auto: update  # change to 'update' after first run
     properties:
       hibernate:
         format_sql: true
