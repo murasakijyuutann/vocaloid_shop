@@ -22,5 +22,6 @@ public class ProductRequestDTO {
 
     private String imageUrl;
 
-    private String category;
+    @NotBlank(message = "카테고리를 입력하세요")
+    private String categoryName;  // 🟩 This replaces the old 'category'
 }

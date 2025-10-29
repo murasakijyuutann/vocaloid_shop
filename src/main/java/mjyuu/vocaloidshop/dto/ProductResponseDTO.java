@@ -13,5 +13,5 @@ public class ProductResponseDTO {
     private String name;
     private int price;
     private String imageUrl;
-    private String category;
+    private String categoryName; // 🟩 new field
 }
