@@ -7,6 +7,7 @@ import lombok.*;
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 @Builder
+
 public class Product {
 
     @Id
@@ -25,5 +26,7 @@ public class Product {
 
     private String imageUrl;
 
-    private String category; // for now - can be changed to @ManyToOne later
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
 }
