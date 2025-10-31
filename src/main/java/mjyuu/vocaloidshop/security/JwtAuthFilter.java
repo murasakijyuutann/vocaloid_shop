@@ -4,7 +4,6 @@ import io.jsonwebtoken.Claims;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import lombok.RequiredArgsConstructor;
-import mjyuu.vocaloidshop.entity.User;
 import mjyuu.vocaloidshop.repository.UserRepository;
 import mjyuu.vocaloidshop.util.JwtUtil;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -34,13 +33,20 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
             try {
                 Claims claims = jwtUtil.validateToken(token);
-                Long userId = claims.get("userId", Long.class);
+        Long userId = claims.get("userId", Long.class);
+        String email = claims.getSubject();
 
-                User user = userRepository.findById(userId)
-                        .orElseThrow(() -> new RuntimeException("사용자 없음"));
+        var user = userRepository.findById(userId)
+            .orElseThrow(() -> new RuntimeException("사용자 없음"));
 
-                UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(user, null, null);
+        var authorities = new java.util.ArrayList<org.springframework.security.core.GrantedAuthority>();
+        if (user.isAdmin()) {
+            authorities.add(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_ADMIN"));
+        }
+
+        // Set principal to email so Authentication#getName returns email, with authorities
+        UsernamePasswordAuthenticationToken authentication =
+            new UsernamePasswordAuthenticationToken(email, null, authorities);
 
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);

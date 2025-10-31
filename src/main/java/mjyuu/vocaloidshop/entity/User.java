@@ -22,6 +22,17 @@ public class User {
 
     private String name;
 
+    @Column(nullable = false)
+    @Builder.Default
+    private boolean isAdmin = false;
+
+    // Optional profile fields
+    private String nickname;
+
+    private java.time.LocalDate birthday;
+
+    private java.time.LocalDateTime birthdayLastUpdatedAt;
+
     // Cart
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<CartItem> cartItems;

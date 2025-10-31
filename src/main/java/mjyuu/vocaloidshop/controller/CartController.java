@@ -33,4 +33,10 @@ public class CartController {
         cartService.removeCartItem(cartItemId);
         return ResponseEntity.noContent().build();
     }
+
+    @PatchMapping("/{cartItemId}/decrement")
+    public ResponseEntity<Void> decrementCartItem(@PathVariable Long cartItemId) {
+        cartService.decrementCartItem(cartItemId);
+        return ResponseEntity.ok().build();
+    }
 }

@@ -18,10 +18,9 @@ spring:
       ddl-auto: update  # change to 'update' after first run
     properties:
       hibernate:
-        format_sql: true
-        highlight_sql: true
-        dialect: org.hibernate.dialect.MySQL8Dialect
-        globally_quoted_identifiers: true
+        "[format_sql]": true
+        "[highlight_sql]": true
+        "[globally_quoted_identifiers]": true
     show-sql: true
 
   mvc:
@@ -40,9 +39,9 @@ spring:
           auth: true
           starttls:
             enable: true
+          from: "noreply@vocalocart.com"
         transport:
           protocol: smtp
-    from: "noreply@vocalocart.com"
 
 springdoc:
   api-docs:
@@ -54,5 +53,5 @@ springdoc:
 
 logging:
   level:
-    org.hibernate.SQL: debug
-    org.hibernate.orm.jdbc.bind: trace
+    "[org.hibernate.SQL]": debug
+    "[org.hibernate.orm.jdbc.bind]": trace

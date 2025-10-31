@@ -11,6 +11,7 @@ import java.util.List;
 @NoArgsConstructor @AllArgsConstructor
 @Builder
 @Table(name = "`order`") // order is a reserved keyword
+
 public class Order {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,4 +26,18 @@ public class Order {
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderItem> items;
+
+    // Shipping snapshot
+    private String shipRecipientName;
+    private String shipLine1;
+    private String shipLine2;
+    private String shipCity;
+    private String shipState;
+    private String shipPostalCode;
+    private String shipCountry;
+    private String shipPhone;
+
+    @Column(length = 32)
+    @Convert(converter = mjyuu.vocaloidshop.util.OrderStatusConverter.class)
+    private OrderStatus status;
 }

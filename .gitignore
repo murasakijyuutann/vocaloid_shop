@@ -1,33 +1,41 @@
-HELP.md
-target/
-.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
+# ------------------------------
+# 🌐 Global .gitignore for full-stack VocaloCart
+# Covers backend (Spring Boot), frontend (React), and proxy (Express)
+# ------------------------------
 
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
-
-### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
-
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
+### 🔧 Node / Frontend (React + Vite)
+node_modules/
+dist/
 build/
-!**/src/main/**/build/
-!**/src/test/**/build/
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
 
-### VS Code ###
+### 🧠 Environment Variables
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+
+### ⚙️ IDE / Editor
 .vscode/
+.idea/
+*.iml
+
+### 📦 Java / Spring Boot (Backend)
+target/
+*.jar
+*.war
+*.ear
+
+### 🧾 Logs
+logs/
+*.log
+
+### 🪶 OS junk
+.DS_Store
+Thumbs.db
+
+### 🚫 Optional local configs
+*.env.example # optional if you want to keep separate example files

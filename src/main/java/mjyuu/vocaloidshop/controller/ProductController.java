@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import mjyuu.vocaloidshop.dto.ProductRequestDTO;
 import mjyuu.vocaloidshop.dto.ProductResponseDTO;
 import mjyuu.vocaloidshop.service.ProductService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +21,18 @@ public class ProductController {
     @GetMapping
     public ResponseEntity<List<ProductResponseDTO>> getAll() {
         return ResponseEntity.ok(productService.getAllProducts());
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<Page<ProductResponseDTO>> search(
+            @RequestParam(required = false) String q,
+            @RequestParam(required = false) Long categoryId,
+            @RequestParam(required = false, defaultValue = "name") String sort,
+            @RequestParam(required = false, defaultValue = "asc") String dir,
+            @RequestParam(required = false, defaultValue = "0") int page,
+            @RequestParam(required = false, defaultValue = "12") int size
+    ) {
+        return ResponseEntity.ok(productService.search(q, categoryId, sort, dir, page, size));
     }
 
     @GetMapping("/{id}")

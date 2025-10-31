@@ -7,6 +7,10 @@ import mjyuu.vocaloidshop.dto.ProductResponseDTO;
 import mjyuu.vocaloidshop.entity.Category;
 import mjyuu.vocaloidshop.entity.Product;
 import mjyuu.vocaloidshop.repository.ProductRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,6 +35,34 @@ public class ProductService {
                         .build())
                 .collect(Collectors.toList());
     }
+
+        public Page<ProductResponseDTO> search(String q, Long categoryId, String sort, String dir, int page, int size) {
+                Sort.Direction direction = "desc".equalsIgnoreCase(dir) ? Sort.Direction.DESC : Sort.Direction.ASC;
+                String sortBy = (sort == null || sort.isBlank()) ? "name" : sort;
+                Pageable pageable = PageRequest.of(Math.max(0, page), Math.max(1, size), Sort.by(direction, sortBy));
+
+                Page<Product> result;
+                boolean hasQ = q != null && !q.isBlank();
+                boolean hasCat = categoryId != null;
+
+                if (hasQ && hasCat) {
+                        result = productRepository.findByNameContainingIgnoreCaseAndCategoryId(q, categoryId, pageable);
+                } else if (hasQ) {
+                        result = productRepository.findByNameContainingIgnoreCase(q, pageable);
+                } else if (hasCat) {
+                        result = productRepository.findByCategoryId(categoryId, pageable);
+                } else {
+                        result = productRepository.findAll(pageable);
+                }
+
+                return result.map(product -> ProductResponseDTO.builder()
+                                .id(product.getId())
+                                .name(product.getName())
+                                .price(product.getPrice())
+                                .imageUrl(product.getImageUrl())
+                                .categoryName(product.getCategory().getName())
+                                .build());
+        }
 
     public ProductResponseDTO getProductById(Long id) {
         Product product = productRepository.findById(id)

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import mjyuu.vocaloidshop.security.JwtAuthFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -17,34 +18,34 @@ public class SecurityConfig {
 
     private final JwtAuthFilter jwtAuthFilter;
 
-    // ✅ Swagger endpoints (Springdoc 3.x)
-    private static final String[] SWAGGER_WHITELIST = {
-        "/v3/api-docs/**",
-        "/swagger-ui/**",
-        "/swagger-ui.html",
-        "/swagger-resources/**",
-        "/api-docs/**",
-        "/webjars/**"
-    };
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            // Disable CSRF for APIs
+            // Disable CSRF for API use
             .csrf(csrf -> csrf.disable())
 
-            // Stateless because of JWT
+            // Disable session (stateless, for JWT)
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
+            // Authorization rules
             .authorizeHttpRequests(auth -> auth
-                // ✅ Allow Swagger & public endpoints
-                .requestMatchers(SWAGGER_WHITELIST).permitAll()
-                .requestMatchers("/auth/**").permitAll()
-                // ✅ Protect everything else
-                .anyRequest().authenticated()
+                // Public endpoints
+                .requestMatchers(HttpMethod.POST, "/auth/login", "/auth/register").permitAll()
+                .requestMatchers(HttpMethod.GET, "/auth/me").authenticated()
+                .requestMatchers(HttpMethod.PATCH, "/auth/me").authenticated()
+                .requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
+                // Allow product/category browsing (optional)
+                .requestMatchers(HttpMethod.GET, "/api/products/**", "/api/categories/**").permitAll()
+                // Admin-only endpoints
+                .requestMatchers(HttpMethod.GET, "/api/orders").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PATCH, "/api/orders/*/status").hasRole("ADMIN")
+                // Protected endpoints
+                .requestMatchers("/api/cart/**", "/api/orders/**", "/api/wishlist/**", "/api/addresses/**").authenticated()
+                // Default
+                .anyRequest().permitAll()
             )
 
-            // Add JWT filter before UsernamePasswordAuthenticationFilter
+            // JWT filter
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

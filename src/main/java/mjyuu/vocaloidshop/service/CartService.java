@@ -50,6 +50,7 @@ public class CartService {
 
         return cartItemRepository.findByUser(user).stream()
                 .map(item -> CartItemResponseDTO.builder()
+                        .cartItemId(item.getId()) // ✅ include ID
                         .productId(item.getProduct().getId())
                         .productName(item.getProduct().getName())
                         .price(item.getProduct().getPrice())
@@ -63,4 +64,18 @@ public class CartService {
     public void removeCartItem(Long cartItemId) {
         cartItemRepository.deleteById(cartItemId);
     }
+
+        @Transactional
+        public void decrementCartItem(Long cartItemId) {
+                CartItem item = cartItemRepository.findById(cartItemId)
+                                .orElseThrow(() -> new RuntimeException("장바구니 항목 없음"));
+
+                int currentQty = item.getQuantity();
+                if (currentQty > 1) {
+                        item.setQuantity(currentQty - 1);
+                        cartItemRepository.save(item);
+                } else {
+                        cartItemRepository.deleteById(cartItemId);
+                }
+        }
 }
